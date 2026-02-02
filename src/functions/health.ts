@@ -1,15 +1,21 @@
-import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
+import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
 
-export async function health(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
-    context.log(`Http function processed request for url "${request.url}"`);
-
-    const name = request.query.get('name') || await request.text() || 'world';
-
-    return { body: `Hello, ${name}!` };
-};
-
-app.http('health', {
-    methods: ['GET', 'POST'],
-    authLevel: 'anonymous',
-    handler: health
+app.http("health", {
+  methods: ["GET"],
+  authLevel: "anonymous",
+  handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
+    return {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      jsonBody: {
+        status: "ok",
+        service: "cumball-backend",
+        version: "1.0.0",
+        time: new Date().toISOString(),
+        env: process.env.AZURE_FUNCTIONS_ENVIRONMENT ?? "unknown",
+      },
+    };
+  },
 });

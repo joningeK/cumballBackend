@@ -1,15 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.health = health;
 const functions_1 = require("@azure/functions");
-async function health(request, context) {
-    context.log(`Http function processed request for url "${request.url}"`);
-    const name = request.query.get('name') || await request.text() || 'world';
-    return { body: `Hello, ${name}!` };
-}
-;
-functions_1.app.http('health', {
-    methods: ['GET', 'POST'],
-    authLevel: 'anonymous',
-    handler: health
+functions_1.app.http("health", {
+    methods: ["GET"],
+    authLevel: "anonymous",
+    handler: async (req) => {
+        return {
+            status: 200,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            jsonBody: {
+                status: "ok",
+                service: "cumball-backend",
+                version: "1.0.0",
+                time: new Date().toISOString(),
+                env: process.env.AZURE_FUNCTIONS_ENVIRONMENT ?? "unknown",
+            },
+        };
+    },
 });
