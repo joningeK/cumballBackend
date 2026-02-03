@@ -8,7 +8,6 @@ app.http("tasksGet", {
   handler: async (): Promise<HttpResponseInit> => {
     const tasks: any[] = [];
 
-    // Hent alle entities
     for await (const entity of tasksTable.listEntities()) {
       tasks.push(entity);
     }
