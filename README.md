@@ -17,9 +17,7 @@ Et enkelt REST-API for CRUD-operasjoner:
 - Node.js (18 LTS eller nyere)
 - Azure Functions Core Tools v4
 - Azure CLI (`az`)
-- En Azure-konto med:
-  - Function App
-  - Storage Account
+- En AzureWebJobsStorage nøkkel
 
 ---
 
