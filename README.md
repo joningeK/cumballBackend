@@ -23,12 +23,14 @@ Et enkelt REST-API for CRUD-operasjoner:
 
 ## Kjøre backend lokalt
 
-### Installer dependencies / konfigurasjon
+### 1. Installer dependencies / konfigurasjon
 
-```bash
+
 npm install
 
-Opprett eller rediger local.settings.json i root av prosjektet:
+Opprett eller rediger `local.settings.json` i root av prosjektet:
+
+```json
 {
   "IsEncrypted": false,
   "Values": {
@@ -40,22 +42,26 @@ Opprett eller rediger local.settings.json i root av prosjektet:
     "CORSCredentials": false
   }
 }
+```
+
 
 
 #Logg inn Azure:
+```bash
 az login
-
+```
 
 #Bygg med:
+```bash
 npm run build
+```
 
-## Start Azure Functions lokalt:
+#Start lokal:
+```bash
 func start
+```
 
-## Deploy:
+#Deploy
+```bash
 func azure functionapp publish CumballBackEnd
-
-
-
-
-
+```
