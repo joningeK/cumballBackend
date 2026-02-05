@@ -1,1 +1,4 @@
-# cumballBackend
+# cumballBackend  
+
+
+npm run start
