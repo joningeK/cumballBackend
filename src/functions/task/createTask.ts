@@ -1,24 +1,17 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
-import { tasksTable } from "../lib/tableClient";
-import { task } from "../types/common";
+import { tasksTable } from "../../lib/tableClient";
+import { v4 as uuidv4 } from "uuid";
+import { task } from "../../types/common";
 
 
-app.http("tasksUpdate", {
-  methods: ["PUT"],
+app.http("createTask", {
+  methods: ["POST"],
   authLevel: "anonymous",
-  route: "tasks/{id}",
+  route: "tasks",
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
-      const id = req.params.id;
-
-      if (!id) {
-        return {
-          status: 400,
-          jsonBody: { error: "id is required" },
-        };
-      }
-
       const body = await req.json();
+
       const { title, description, score } = body as task;
 
       if (!title) {
@@ -34,33 +27,34 @@ app.http("tasksUpdate", {
           jsonBody: { error: "description is required" },
         };
       }
-
+      
       if (typeof score !== "number") {
         return {
           status: 400,
-          jsonBody: { error: "score must be a number" },
+          jsonBody: { error: "score is required" },
         };
       }
-
-      const updatedTask = {
+      const task = {
         partitionKey: "TASK",
-        rowKey: id,
+        rowKey: uuidv4(),
         title,
-        description,
-        score,
-        updatedAt: new Date().toISOString(),
+        description: description ?? "",
+        score: score ?? 0,
+        createdAt: new Date().toISOString(),
       };
 
-      await tasksTable.updateEntity(updatedTask, "Merge");
+      await tasksTable.createEntity(task);
 
       return {
-        status: 200,
-        jsonBody: updatedTask,
+        status: 201,
+        jsonBody: task,
       };
     } catch (error) {
       return {
         status: 500,
-        jsonBody: { error: "Failed to update task" },
+        jsonBody: {
+          error: "Failed to create task",
+        },
       };
     }
   },
