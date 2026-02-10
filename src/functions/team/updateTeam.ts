@@ -6,7 +6,7 @@ import { team } from "../../types/common";
 app.http("updateTeam", {
   methods: ["PUT"],
   authLevel: "anonymous",
-  route: "teams/{id}",
+  route: "team/{id}",
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
       const id = req.params.id;

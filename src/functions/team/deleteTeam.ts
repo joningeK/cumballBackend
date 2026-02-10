@@ -4,7 +4,7 @@ import { teamsTable } from "../../lib/tableClient";
 app.http("deleteTeam", {
   methods: ["DELETE"],
   authLevel: "anonymous",
-  route: "teams/{id}", 
+  route: "team/{id}", 
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
       const id = req.params.id;

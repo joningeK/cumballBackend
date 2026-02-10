@@ -1,5 +1,5 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
-import { tasksTable } from "../../lib/tableClient";
+import { teamsTable } from "../../lib/tableClient";
 import { v4 as uuidv4 } from "uuid";
 import { team } from "../../types/common";
 
@@ -7,7 +7,7 @@ import { team } from "../../types/common";
 app.http("createTeam", {
   methods: ["POST"],
   authLevel: "anonymous",
-  route: "teams ",
+  route: "team",
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
       const body = await req.json();
@@ -28,7 +28,7 @@ app.http("createTeam", {
         createdAt: new Date().toISOString(),
       };
 
-      await tasksTable.createEntity(team);
+      await teamsTable.createEntity(team);
 
       return {
         status: 201,
