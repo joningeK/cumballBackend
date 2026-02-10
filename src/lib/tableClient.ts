@@ -6,3 +6,13 @@ export const tasksTable = TableClient.fromConnectionString(
   connectionString,
   "Tasks"
 );
+
+export const playersTable = TableClient.fromConnectionString(
+  connectionString,
+  "Players"
+);
+
+export const teamsTable = TableClient.fromConnectionString(
+  connectionString,
+  "Teams"
+);

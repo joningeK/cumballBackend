@@ -1,10 +1,10 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
-import { tasksTable } from "../lib/tableClient";
+import { playersTable } from "../../lib/tableClient";
 
-app.http("tasksDelete", {
+app.http("deletePlayer", {
   methods: ["DELETE"],
   authLevel: "anonymous",
-  route: "tasks/{id}", 
+  route: "players/{id}", 
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
       const id = req.params.id;
@@ -16,7 +16,7 @@ app.http("tasksDelete", {
         };
       }
 
-      await tasksTable.deleteEntity("TASK", id);
+      await playersTable.deleteEntity("PLAYER", id);
 
       return {
         status: 204, // No Content
@@ -24,7 +24,7 @@ app.http("tasksDelete", {
     } catch (error) {
       return {
         status: 500,
-        jsonBody: { error: "Failed to delete task" },
+        jsonBody: { error: "Failed to delete player" },
       };
     }
   },

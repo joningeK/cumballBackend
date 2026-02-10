@@ -1,17 +1,24 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
-import { tasksTable } from "../lib/tableClient";
-import { v4 as uuidv4 } from "uuid";
-import { task } from "../types/common";
+import { tasksTable } from "../../lib/tableClient";
+import { task } from "../../types/common";
 
 
-app.http("tasksCreate", {
-  methods: ["POST"],
+app.http("updateTask", {
+  methods: ["PUT"],
   authLevel: "anonymous",
-  route: "tasks",
+  route: "tasks/{id}",
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
-      const body = await req.json();
+      const id = req.params.id;
 
+      if (!id) {
+        return {
+          status: 400,
+          jsonBody: { error: "id is required" },
+        };
+      }
+
+      const body = await req.json();
       const { title, description, score } = body as task;
 
       if (!title) {
@@ -27,34 +34,33 @@ app.http("tasksCreate", {
           jsonBody: { error: "description is required" },
         };
       }
-      
+
       if (typeof score !== "number") {
         return {
           status: 400,
-          jsonBody: { error: "score is required" },
+          jsonBody: { error: "score must be a number" },
         };
       }
-      const task = {
+
+      const updatedTask = {
         partitionKey: "TASK",
-        rowKey: uuidv4(),
+        rowKey: id,
         title,
-        description: description ?? "",
-        score: score ?? 0,
-        createdAt: new Date().toISOString(),
+        description,
+        score,
+        updatedAt: new Date().toISOString(),
       };
 
-      await tasksTable.createEntity(task);
+      await tasksTable.updateEntity(updatedTask, "Merge");
 
       return {
-        status: 201,
-        jsonBody: task,
+        status: 200,
+        jsonBody: updatedTask,
       };
     } catch (error) {
       return {
         status: 500,
-        jsonBody: {
-          error: "Failed to create task",
-        },
+        jsonBody: { error: "Failed to update task" },
       };
     }
   },
