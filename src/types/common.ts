@@ -22,3 +22,24 @@ export type team = {
 }
 
 
+export type taskState = {
+    rowKey?: string;
+    teamId: string;
+    state: state;
+}
+
+
+
+export type comment = {
+    rowKey?: string;
+    teamId: string;
+    taskId: string;
+    comment: string;
+}
+
+
+export enum state {
+    PENDING = "PENDING",
+    REJECTED = "REJECTED",
+    ACCEPTED = "ACCEPTED"
+}

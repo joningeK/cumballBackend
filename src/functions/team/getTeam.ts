@@ -1,26 +1,26 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
 import { teamsTable } from "../../lib/tableClient";
-import { team } from "../../types/common";
+
 app.http("getTeam", {
   methods: ["GET"],
   authLevel: "anonymous",
-  route: "team",
-  handler: async (): Promise<HttpResponseInit> => {
-    const teams: team[] = [];
+  route: "teams/{id}",
+  handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
+    const id = req.params.id;
 
-    for await (const entity of teamsTable.listEntities()) {
-      const team: team = {
-        rowKey: entity.rowKey as string | undefined,
-        name: entity.name as string
+    if (!id) {
+      return {
+        status: 400,
+        jsonBody: { error: "id is required" },
       };
-      teams.push(team);
     }
-
+  
+    const team = await teamsTable.getEntity("TEAM", id);
     return {
       status: 200,
       jsonBody: {
-        count: teams.length,
-        teams,
+        count: 1,
+        team,
       },
     };
   },

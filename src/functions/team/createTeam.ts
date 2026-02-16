@@ -3,16 +3,15 @@ import { teamsTable } from "../../lib/tableClient";
 import { v4 as uuidv4 } from "uuid";
 import { team } from "../../types/common";
 
-
 app.http("createTeam", {
   methods: ["POST"],
   authLevel: "anonymous",
-  route: "team",
+  route: "teams",
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
       const body = await req.json();
 
-      const { rowKey , name, } = body as team;
+      const { name, } = body as team;
 
       if (!name) {
         return {

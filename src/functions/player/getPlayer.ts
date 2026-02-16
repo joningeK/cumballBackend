@@ -1,30 +1,26 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
 import { playersTable } from "../../lib/tableClient";
-import { player } from "../../types/common";
-
 
 app.http("getPlayer", {
   methods: ["GET"],
   authLevel: "anonymous",
-  route: "players",
-  handler: async (): Promise<HttpResponseInit> => {
-    const players: player[] = [];
+  route: "players/{id}",
+  handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
+    const id = req.params.id;
 
-    for await (const entity of playersTable.listEntities()) {            
-      const player: player = {
-        rowKey: entity.rowKey as string | undefined,
-        name: entity.name as string,
-        club: entity.club as string | undefined,
-        teamId: entity.teamId as string | undefined,
+    if (!id) {
+      return {
+        status: 400,
+        jsonBody: { error: "id is required" },
       };
-      players.push(player);      
     }
-
+  
+    const player = await playersTable.getEntity("PLAYER", id);
     return {
       status: 200,
       jsonBody: {
-        count: players.length,
-        players,
+        count: 1,
+        player,
       },
     };
   },

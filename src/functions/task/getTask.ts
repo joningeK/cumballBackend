@@ -1,30 +1,27 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
 import { tasksTable } from "../../lib/tableClient";
-import { task } from "../../types/common";
 
 app.http("getTask", {
   methods: ["GET"],
   authLevel: "anonymous",
-  route: "tasks",
-  handler: async (): Promise<HttpResponseInit> => {
-    const tasks: task[] = [];
+  route: "tasks/{id}",
+  handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
+    const id = req.params.id;
 
-    for await (const entity of tasksTable.listEntities()) {
-      const task: task = {
-        rowKey: entity.rowKey as string | undefined,
-        title: entity.title as string,
-        description: entity.description as string,
-        score: entity.score as number
+    if (!id) {
+      return {
+        status: 400,
+        jsonBody: { error: "id is required" },
       };
-      tasks.push(task);
-
     }
+  
+    const task = await tasksTable.getEntity("TASK", id);
 
     return {
       status: 200,
       jsonBody: {
-        count: tasks.length,
-        tasks,
+        count: 1,
+        task,
       },
     };
   },

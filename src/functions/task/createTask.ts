@@ -3,7 +3,6 @@ import { tasksTable } from "../../lib/tableClient";
 import { v4 as uuidv4 } from "uuid";
 import { task } from "../../types/common";
 
-
 app.http("createTask", {
   methods: ["POST"],
   authLevel: "anonymous",
