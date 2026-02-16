@@ -16,3 +16,24 @@ export const teamsTable = TableClient.fromConnectionString(
   connectionString,
   "Teams"
 );
+
+export const taskStatesTable = TableClient.fromConnectionString(
+  connectionString,
+  "TaskStates"
+);
+
+
+export const commentsTable = TableClient.fromConnectionString(
+  connectionString,
+  "Comments"
+);
+
+export const taskImagesTable = TableClient.fromConnectionString(
+  connectionString,
+  "TaskImages"
+);
+
+
+
+
+

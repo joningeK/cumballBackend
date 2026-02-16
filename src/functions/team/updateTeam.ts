@@ -2,11 +2,10 @@ import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
 import { teamsTable } from "../../lib/tableClient";
 import { team } from "../../types/common";
 
-
 app.http("updateTeam", {
   methods: ["PUT"],
   authLevel: "anonymous",
-  route: "team/{id}",
+  route: "teams/{id}",
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
       const id = req.params.id;
