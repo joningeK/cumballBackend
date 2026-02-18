@@ -19,7 +19,7 @@ app.http("updateTask", {
       }
 
       const body = await req.json();
-      const { title, description, score } = body as task;
+      const { title, description, points, isBonus } = body as task;
 
       if (!title) {
         return {
@@ -35,10 +35,10 @@ app.http("updateTask", {
         };
       }
 
-      if (typeof score !== "number") {
+      if (typeof points !== "number") {
         return {
           status: 400,
-          jsonBody: { error: "score must be a number" },
+          jsonBody: { error: "points must be a number" },
         };
       }
 
@@ -47,7 +47,8 @@ app.http("updateTask", {
         rowKey: id,
         title,
         description,
-        score,
+        points,
+        isBonus: isBonus ?? false,
         updatedAt: new Date().toISOString(),
       };
 

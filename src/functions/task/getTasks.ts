@@ -14,7 +14,8 @@ app.http("getTasks", {
         rowKey: entity.rowKey as string | undefined,
         title: entity.title as string,
         description: entity.description as string,
-        score: entity.score as number
+        points: entity.points as number,
+        isBonus: entity.isBonus as boolean,
       };
       tasks.push(task);
 
