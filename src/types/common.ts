@@ -3,7 +3,8 @@ export type task = {
     rowKey?: string;
     title: string;
     description: string;
-    score: number;
+    points: number;
+    isBonus: boolean;
 }
 
 

@@ -11,7 +11,7 @@ app.http("createTask", {
     try {
       const body = await req.json();
 
-      const { title, description, score } = body as task;
+      const { title, description, points, isBonus } = body as task;
 
       if (!title) {
         return {
@@ -27,10 +27,10 @@ app.http("createTask", {
         };
       }
       
-      if (typeof score !== "number") {
+      if (typeof points !== "number") {
         return {
           status: 400,
-          jsonBody: { error: "score is required" },
+          jsonBody: { error: "points is required" },
         };
       }
       const task = {
@@ -38,7 +38,8 @@ app.http("createTask", {
         rowKey: uuidv4(),
         title,
         description: description ?? "",
-        score: score ?? 0,
+        points: points ?? 0,
+        isBonus: isBonus ?? false,
         createdAt: new Date().toISOString(),
       };
 
