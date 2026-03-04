@@ -11,7 +11,7 @@ app.http("getTasks", {
 
     for await (const entity of tasksTable.listEntities()) {
       const task: task = {
-        rowKey: entity.rowKey as string | undefined,
+        taskId: entity.rowKey as string | undefined,
         title: entity.title as string,
         description: entity.description as string,
         points: entity.points as number,
