@@ -14,15 +14,12 @@ app.http("getTask", {
         jsonBody: { error: "id is required" },
       };
     }
-  
+
     const task = await tasksTable.getEntity("TASK", id);
 
     return {
       status: 200,
-      jsonBody: {
-        count: 1,
-        task,
-      },
+      jsonBody: task,
     };
   },
 });
