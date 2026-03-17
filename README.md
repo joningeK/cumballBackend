@@ -5,7 +5,7 @@ og Azure Table Storage
 
 Et enkelt REST-API for CRUD-operasjoner:
 - Azure Functions (v4)
-- Node.js (18+ anbefalt)
+- Node.js
 - TypeScript
 - Azure Table Storage
 - Azure Functions Core Tools
