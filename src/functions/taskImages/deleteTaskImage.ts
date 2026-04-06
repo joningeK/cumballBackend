@@ -1,11 +1,10 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
 import { taskImagesTable } from "../../lib/tableClient";
 
-
 app.http("deleteTaskImage", {
   methods: ["DELETE"],
   authLevel: "anonymous",
-  route: "taskImages/{id}", 
+  route: "taskImages/{id}",
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
       const id = req.params.id;
@@ -17,7 +16,7 @@ app.http("deleteTaskImage", {
         };
       }
 
-      await taskImagesTable.deleteEntity("TASKIMAGE", id);
+      await taskImagesTable.deleteEntity("TASKIMAGES", id);
 
       return {
         status: 204, // No Content

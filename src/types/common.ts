@@ -1,46 +1,52 @@
-
 export type task = {
-    rowKey?: string;
-    title: string;
-    description: string;
-    points: number;
-    isBonus: boolean;
-}
+  taskId?: string;
+  title: string;
+  description: string;
+  points: number;
+  isBonus: boolean;
+};
 
+export type taskImage = {
+  taskId?: string;
+  teamId?: string;
+  image: string;
+  points: number;
+  isBonus: boolean;
+};
 
 export type player = {
-    rowKey?: string;
-    name: string;
-    club?: string;
-    teamId?: string;
-}
-
-
+  rowKey?: string;
+  name: string;
+  club?: string;
+  teamId?: string;
+};
 
 export type team = {
-    rowKey?: string;
-    name: string;    
-}
+  rowKey?: string;
+  name: string;
+  // passwordHash: string;
+};
 
+export type teamRequest = {
+  name: string;
+  password: string;
+};
 
 export type taskState = {
-    rowKey?: string;
-    teamId: string;
-    state: state;
-}
-
-
+  rowKey?: string;
+  teamId: string;
+  state: state;
+};
 
 export type comment = {
-    rowKey?: string;
-    teamId: string;
-    taskId: string;
-    comment: string;
-}
-
+  rowKey?: string;
+  teamId: string;
+  taskId: string;
+  comment: string;
+};
 
 export enum state {
-    PENDING = "PENDING",
-    REJECTED = "REJECTED",
-    ACCEPTED = "ACCEPTED"
+  PENDING = "PENDING",
+  REJECTED = "REJECTED",
+  ACCEPTED = "ACCEPTED",
 }

@@ -1,39 +1,37 @@
 import { TableClient } from "@azure/data-tables";
+import { BlobServiceClient } from "@azure/storage-blob";
 
 const connectionString = process.env.AzureWebJobsStorage!;
 
 export const tasksTable = TableClient.fromConnectionString(
   connectionString,
-  "Tasks"
+  "Tasks",
 );
 
 export const playersTable = TableClient.fromConnectionString(
   connectionString,
-  "Players"
+  "Players",
 );
 
 export const teamsTable = TableClient.fromConnectionString(
   connectionString,
-  "Teams"
+  "Teams",
 );
 
 export const taskStatesTable = TableClient.fromConnectionString(
   connectionString,
-  "TaskStates"
+  "TaskStates",
 );
-
 
 export const commentsTable = TableClient.fromConnectionString(
   connectionString,
-  "Comments"
+  "Comments",
 );
 
 export const taskImagesTable = TableClient.fromConnectionString(
   connectionString,
-  "TaskImages"
+  "TaskImages",
 );
 
-
-
-
-
+export const blobService =
+  BlobServiceClient.fromConnectionString(connectionString);
