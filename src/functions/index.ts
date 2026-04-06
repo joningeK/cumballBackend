@@ -14,3 +14,10 @@ import "./player/getPlayers";
 import "./player/createPlayer";
 import "./player/deletePlayer";
 import "./player/updatePlayer";
+
+import "./taskImages/createTaskImage";
+import "./taskImages/deleteTaskImage";
+import "./taskImages/getTaskImage";
+
+import "./auth/login";
+import "./auth/register";
