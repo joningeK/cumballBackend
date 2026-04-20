@@ -1,13 +1,17 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
 import { teamsTable } from "../../lib/tableClient";
+import { requireAdmin } from "../../lib/auth";
 
 app.http("deleteTeam", {
   methods: ["DELETE"],
   authLevel: "anonymous",
-  route: "teams/{id}", 
+  route: "teams/{id}",
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
       const id = req.params.id;
+
+      const user = requireAdmin(req);
+      const teamId = user.teamId;
 
       if (!id) {
         return {

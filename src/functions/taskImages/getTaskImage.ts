@@ -1,22 +1,17 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
 import { taskImagesTable } from "../../lib/tableClient";
+import { requireAuth } from "../../lib/auth";
 
 app.http("getTaskImage", {
   methods: ["GET"],
   authLevel: "anonymous",
-  route: "taskImages/{taskId}/{teamId}",
+  route: "taskImages/{taskId}",
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
-      const teamId = req.params.teamId;
       const taskId = req.params.taskId;
 
-      if (!teamId) {
-        return {
-          status: 400,
-          jsonBody: { error: "teamId is required" },
-        };
-      }
-
+      const user = requireAuth(req);
+      const teamId = user.teamId;
       if (!taskId) {
         return {
           status: 400,

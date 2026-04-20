@@ -1,6 +1,7 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
 import { teamsTable } from "../../lib/tableClient";
 import { team } from "../../types/common";
+import { requireAdmin } from "../../lib/auth";
 
 app.http("updateTeam", {
   methods: ["PUT"],
@@ -10,6 +11,8 @@ app.http("updateTeam", {
     try {
       const id = req.params.id;
 
+      const user = requireAdmin(req);
+      const teamId = user.teamId;
       if (!id) {
         return {
           status: 400,
@@ -26,7 +29,6 @@ app.http("updateTeam", {
           jsonBody: { error: "name is required" },
         };
       }
-
 
       const updatedTeam = {
         partitionKey: "TEAM",

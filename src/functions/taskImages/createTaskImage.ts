@@ -1,6 +1,7 @@
 import { BlobServiceClient } from "@azure/storage-blob";
 import { app } from "@azure/functions";
 import { taskImagesTable, blobService } from "../../lib/tableClient";
+import { requireAuth } from "../../lib/auth";
 
 app.http("createTaskImage", {
   methods: ["POST"],
@@ -10,8 +11,9 @@ app.http("createTaskImage", {
     const formData = await req.formData();
     const file = formData.get("file");
     const taskId = formData.get("taskId");
-    const teamId = formData.get("teamId");
 
+    const user = requireAuth(req);
+    const teamId = user.teamId;
     if (!(file instanceof File)) {
       throw new Error("Invalid file upload");
     }

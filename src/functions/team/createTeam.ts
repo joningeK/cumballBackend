@@ -2,6 +2,7 @@ import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
 import { teamsTable } from "../../lib/tableClient";
 import { v4 as uuidv4 } from "uuid";
 import { team } from "../../types/common";
+import { requireAdmin } from "../../lib/auth";
 
 app.http("createTeam", {
   methods: ["POST"],
@@ -11,7 +12,9 @@ app.http("createTeam", {
     try {
       const body = await req.json();
 
-      const { name, } = body as team;
+      const { name } = body as team;
+      const user = requireAdmin(req);
+      const teamId = user.teamId;
 
       if (!name) {
         return {

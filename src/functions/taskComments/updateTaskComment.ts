@@ -1,6 +1,6 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
 import { commentsTable } from "../../lib/tableClient";
-
+import { requireAuth } from "../../lib/auth";
 
 app.http("updateTaskComment", {
   methods: ["PUT"],
@@ -9,22 +9,15 @@ app.http("updateTaskComment", {
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
       const id = req.params.id;
-      const teamId = req.params.teamId;
       const taskId = req.params.taskId;
       const comment = req.params.comment;
-
+      const user = requireAuth(req);
+      const teamId = user.teamId;
 
       if (!id) {
         return {
           status: 400,
           jsonBody: { error: "id is required" },
-        };
-      }
-
-      if (!teamId) {
-        return {
-          status: 400,
-          jsonBody: { error: "teamId is required" },
         };
       }
 

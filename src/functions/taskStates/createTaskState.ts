@@ -1,37 +1,31 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
 import { taskStatesTable } from "../../lib/tableClient";
 import { v4 as uuidv4 } from "uuid";
+import { requireAuth } from "../../lib/auth";
 
+import { state } from "../../types/common";
 
 app.http("createTaskState", {
   methods: ["POST"],
   authLevel: "anonymous",
-  route: "taskState/{teamId}/{state}",
+  route: "taskState/{taskId}/{state}",
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
-
-      const teamId = req.params.teamId;
+      const taskId = req.params.taskId;
       const state = req.params.state;
 
-      if (!teamId) {
+      const user = requireAuth(req);
+      const teamId = user.teamId;
+      if (!taskId) {
         return {
           status: 400,
-          jsonBody: { error: "teamId is required" },
+          jsonBody: { error: "taskId is required" },
         };
       }
-
-      if (!state) {
-        return {
-          status: 400,
-          jsonBody: { error: "state is required" },
-        };
-      }
-
 
       const taskState = {
-        partitionKey: "TASKSTATE",
-        rowKey: uuidv4(),
-        teamId: teamId,
+        partitionKey: teamId,
+        rowKey: taskId,
         state: state,
         createdAt: new Date().toISOString(),
       };

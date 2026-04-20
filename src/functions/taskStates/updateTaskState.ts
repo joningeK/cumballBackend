@@ -1,23 +1,17 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
 import { taskStatesTable } from "../../lib/tableClient";
-
+import { requireAuth } from "../../lib/auth";
 
 app.http("updateTaskState", {
   methods: ["PUT"],
   authLevel: "anonymous",
-  route: "taskStates/{teamId}/{state}",
+  route: "taskStates/{state}",
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
-
-      const teamId = req.params.teamId;
       const state = req.params.state;
 
-      if (!teamId) {
-        return {
-          status: 400,
-          jsonBody: { error: "teamId is required" },
-        };
-      }
+      const user = requireAuth(req);
+      const teamId = user.teamId;
 
       if (!state) {
         return {
