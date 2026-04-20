@@ -1,25 +1,17 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
 import { commentsTable } from "../../lib/tableClient";
 import { v4 as uuidv4 } from "uuid";
-
-
+import { requireAuth } from "../../lib/auth";
 app.http("createTaskComment", {
   methods: ["POST"],
   authLevel: "anonymous",
-  route: "taskComments/{teamId}/{taskId}/{comment}",
+  route: "taskComments/{taskId}/{comment}",
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
-
-      const teamId = req.params.teamId;
       const taskId = req.params.taskId;
       const comment = req.params.comment;
-
-      if (!teamId) {
-        return {
-          status: 400,
-          jsonBody: { error: "teamId is required" },
-        };
-      }
+      const user = requireAuth(req);
+      const teamId = user.teamId;
 
       if (!taskId) {
         return {
@@ -34,13 +26,12 @@ app.http("createTaskComment", {
         };
       }
 
-
       const newComment = {
         partitionKey: "TASKCOMMENT",
         rowKey: uuidv4(),
         teamId: teamId,
         taskId: taskId,
-        comment: comment,   
+        comment: comment,
         createdAt: new Date().toISOString(),
       };
 

@@ -1,7 +1,7 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
 import { tasksTable } from "../../lib/tableClient";
 import { task } from "../../types/common";
-
+import { requireAdmin, requireAuth } from "../../lib/auth";
 
 app.http("updateTask", {
   methods: ["PUT"],
@@ -9,7 +9,12 @@ app.http("updateTask", {
   route: "tasks/{id}",
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
+      const body = await req.json();
+      console.log("Received updateTask request with body:", body);
       const id = req.params.id;
+
+      const user = requireAuth(req);
+      const teamId = user.teamId;
 
       if (!id) {
         return {
@@ -18,9 +23,8 @@ app.http("updateTask", {
         };
       }
 
-      const body = await req.json();
       const { title, description, points, isBonus } = body as task;
-
+      console.log("Updating task with title:", title);
       if (!title) {
         return {
           status: 400,

@@ -1,5 +1,6 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
 import { teamsTable } from "../../lib/tableClient";
+import { requireAuth } from "../../lib/auth";
 
 app.http("getTeam", {
   methods: ["GET"],
@@ -7,6 +8,7 @@ app.http("getTeam", {
   route: "teams/{id}",
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     const id = req.params.id;
+    const user = requireAuth(req);
 
     if (!id) {
       return {
@@ -14,7 +16,7 @@ app.http("getTeam", {
         jsonBody: { error: "id is required" },
       };
     }
-  
+
     const team = await teamsTable.getEntity("TEAM", id);
     return {
       status: 200,

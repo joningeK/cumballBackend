@@ -19,5 +19,10 @@ import "./taskImages/createTaskImage";
 import "./taskImages/deleteTaskImage";
 import "./taskImages/getTaskImage";
 
+import "./taskStates/createTaskState";
+import "./taskStates/deleteTaskState";
+import "./taskStates/updateTaskState";
+import "./taskStates/getTaskState";
+
 import "./auth/login";
 import "./auth/register";

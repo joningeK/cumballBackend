@@ -2,6 +2,7 @@ import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
 import { teamsTable } from "../../lib/tableClient";
 import bcrypt from "bcryptjs";
 import { player, team, teamRequest } from "../../types/common";
+import jwt from "jsonwebtoken";
 
 app.http("login", {
   methods: ["POST"],
@@ -49,11 +50,22 @@ app.http("login", {
         };
       }
 
+      const token = jwt.sign(
+        {
+          teamId: team.rowKey,
+          isAdmin: team.isAdmin,
+        },
+        "super_secret_key",
+        { expiresIn: "7d" },
+      );
+
       return {
         status: 200,
         jsonBody: {
           teamId: team.rowKey,
           name: team.name,
+          isAdmin: team.isAdmin,
+          token,
         },
       };
     } catch (err) {

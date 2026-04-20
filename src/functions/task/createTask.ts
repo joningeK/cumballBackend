@@ -2,6 +2,7 @@ import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
 import { tasksTable } from "../../lib/tableClient";
 import { v4 as uuidv4 } from "uuid";
 import { task } from "../../types/common";
+import { requireAdmin } from "../../lib/auth";
 
 app.http("createTask", {
   methods: ["POST"],
@@ -12,6 +13,9 @@ app.http("createTask", {
       const body = await req.json();
 
       const { title, description, points, isBonus } = body as task;
+
+      const user = requireAdmin(req);
+      const teamId = user.teamId;
 
       if (!title) {
         return {
@@ -26,7 +30,7 @@ app.http("createTask", {
           jsonBody: { error: "description is required" },
         };
       }
-      
+
       if (typeof points !== "number") {
         return {
           status: 400,

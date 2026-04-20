@@ -1,6 +1,7 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
 import { commentsTable } from "../../lib/tableClient";
-import { comment  } from "../../types/common";
+import { comment } from "../../types/common";
+import { requireAuth } from "../../lib/auth";
 
 app.http("getTaskComments", {
   methods: ["GET"],
@@ -9,6 +10,9 @@ app.http("getTaskComments", {
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     const comments: comment[] = [];
     const taskId = req.params.taskId;
+
+    const user = requireAuth(req);
+
     for await (const entity of commentsTable.listEntities()) {
       if (entity.taskId !== taskId) continue;
       const comment: comment = {
@@ -18,7 +22,6 @@ app.http("getTaskComments", {
         comment: entity.comment as string,
       };
       comments.push(comment);
-
     }
 
     return {

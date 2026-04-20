@@ -1,5 +1,6 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
 import { tasksTable } from "../../lib/tableClient";
+import { requireAuth } from "../../lib/auth";
 
 app.http("getTask", {
   methods: ["GET"],
@@ -7,6 +8,8 @@ app.http("getTask", {
   route: "tasks/{id}",
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     const id = req.params.id;
+
+    const user = requireAuth(req);
 
     if (!id) {
       return {
