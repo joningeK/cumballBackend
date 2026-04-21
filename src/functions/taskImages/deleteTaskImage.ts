@@ -16,7 +16,7 @@ app.http("deleteTaskImage", {
         };
       }
 
-      await taskImagesTable.deleteEntity("TASKIMAGES", id);
+      await taskImagesTable.deleteEntity("TASKIMAGES", id); //todo fix me
 
       return {
         status: 204, // No Content

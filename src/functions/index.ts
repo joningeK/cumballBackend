@@ -18,11 +18,13 @@ import "./player/updatePlayer";
 import "./taskImages/createTaskImage";
 import "./taskImages/deleteTaskImage";
 import "./taskImages/getTaskImage";
+import "./taskImages/getTaskImageAdmin";
 
 import "./taskStates/createTaskState";
 import "./taskStates/deleteTaskState";
 import "./taskStates/updateTaskState";
 import "./taskStates/getTaskState";
+import "./taskStates/getTaskStates";
 
 import "./auth/login";
 import "./auth/register";
