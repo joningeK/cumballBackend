@@ -18,10 +18,7 @@ app.http("getTaskImage", {
           jsonBody: { error: "id is required" },
         };
       }
-      const taskImage = await taskImagesTable.getEntity(
-        "TASKIMAGES",
-        teamId + taskId,
-      );
+      const taskImage = await taskImagesTable.getEntity(teamId, taskId);
 
       return {
         status: 200,
@@ -31,7 +28,9 @@ app.http("getTaskImage", {
       return {
         status: 500,
         jsonBody: {
-          error: "Failed to retrieve taskImage",
+          error:
+            "Failed to retrieve taskImage" +
+            (error instanceof Error ? ": " + error.message : ""),
         },
       };
     }

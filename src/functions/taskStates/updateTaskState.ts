@@ -5,13 +5,13 @@ import { requireAuth } from "../../lib/auth";
 app.http("updateTaskState", {
   methods: ["PUT"],
   authLevel: "anonymous",
-  route: "taskStates/{state}",
+  route: "taskStates/{teamId}/{taskId}/{state}",
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
       const state = req.params.state;
-
+      const taskId = req.params.taskId;
+      const teamId = req.params.teamId;
       const user = requireAuth(req);
-      const teamId = user.teamId;
 
       if (!state) {
         return {
@@ -21,10 +21,9 @@ app.http("updateTaskState", {
       }
 
       const updatedTaskState = {
-        partitionKey: "TASKSTATE",
-        rowKey: teamId,
-        teamId,
-        state,
+        partitionKey: teamId,
+        rowKey: taskId,
+        state: state,
         updatedAt: new Date().toISOString(),
       };
 

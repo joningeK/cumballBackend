@@ -33,8 +33,8 @@ app.http("createTaskImage", {
 
     // lagre metadata i Table Storage
     await taskImagesTable.createEntity({
-      partitionKey: "TASKIMAGES",
-      rowKey: teamId + taskId,
+      partitionKey: teamId,
+      rowKey: taskId,
       imageUrl,
       createdAt: new Date().toISOString(),
     });

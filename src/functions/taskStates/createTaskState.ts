@@ -23,19 +23,45 @@ app.http("createTaskState", {
         };
       }
 
-      const taskState = {
-        partitionKey: teamId,
-        rowKey: taskId,
-        state: state,
-        createdAt: new Date().toISOString(),
-      };
+      // Check if taskState already exists
+      let existingTaskState;
+      try {
+        existingTaskState = await taskStatesTable.getEntity(teamId, taskId);
+      } catch (error) {
+        // Entity doesn't exist, existingTaskState remains undefined
+      }
 
-      await taskStatesTable.createEntity(taskState);
+      if (existingTaskState) {
+        // Update existing taskState to "pending"
+        const updatedTaskState = {
+          partitionKey: teamId,
+          rowKey: taskId,
+          state: "pending",
+          updatedAt: new Date().toISOString(),
+        };
 
-      return {
-        status: 201,
-        jsonBody: taskState,
-      };
+        await taskStatesTable.updateEntity(updatedTaskState, "Merge");
+
+        return {
+          status: 200,
+          jsonBody: updatedTaskState,
+        };
+      } else {
+        // Create new taskState
+        const taskState = {
+          partitionKey: teamId,
+          rowKey: taskId,
+          state: state,
+          createdAt: new Date().toISOString(),
+        };
+
+        await taskStatesTable.createEntity(taskState);
+
+        return {
+          status: 201,
+          jsonBody: taskState,
+        };
+      }
     } catch (error) {
       return {
         status: 500,
