@@ -1,11 +1,11 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
-import { taskStatesTable } from "../../lib/tableClient";
+import { taskSubmissionsTable } from "../../lib/tableClient";
 import { requireAuth } from "../../lib/auth";
 
-app.http("updateTaskState", {
+app.http("updateTaskSubmission", {
   methods: ["PUT"],
   authLevel: "anonymous",
-  route: "taskStates/{teamId}/{taskId}/{state}",
+  route: "taskSubmissions/{teamId}/{taskId}/{state}",
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
       const state = req.params.state;
@@ -20,23 +20,23 @@ app.http("updateTaskState", {
         };
       }
 
-      const updatedTaskState = {
+      const updatedTaskSubmission = {
         partitionKey: teamId,
         rowKey: taskId,
         state: state,
         updatedAt: new Date().toISOString(),
       };
 
-      await taskStatesTable.updateEntity(updatedTaskState, "Merge");
+      await taskSubmissionsTable.updateEntity(updatedTaskSubmission, "Merge");
 
       return {
         status: 200,
-        jsonBody: updatedTaskState,
+        jsonBody: updatedTaskSubmission,
       };
     } catch (error) {
       return {
         status: 500,
-        jsonBody: { error: "Failed to update taskstate" },
+        jsonBody: { error: "Failed to update taskSubmission" },
       };
     }
   },

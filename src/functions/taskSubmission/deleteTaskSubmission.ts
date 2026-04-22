@@ -1,11 +1,11 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
-import { taskStatesTable } from "../../lib/tableClient";
+import { taskSubmissionsTable } from "../../lib/tableClient";
 
 
-app.http("deleteTaskState", {
+app.http("deleteTaskSubmission", {
   methods: ["DELETE"],
   authLevel: "anonymous",
-  route: "taskStates/{id}", 
+  route: "taskSubmissions/{id}", 
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
       const id = req.params.id;
@@ -17,7 +17,7 @@ app.http("deleteTaskState", {
         };
       }
 
-      await taskStatesTable.deleteEntity("TASKSTATE", id);
+      await taskSubmissionsTable.deleteEntity("TASKSUBMISSION", id);
 
       return {
         status: 204, // No Content
@@ -25,7 +25,7 @@ app.http("deleteTaskState", {
     } catch (error) {
       return {
         status: 500,
-        jsonBody: { error: "Failed to delete taskStateTable" },
+        jsonBody: { error: "Failed to delete taskSubmission" },
       };
     }
   },

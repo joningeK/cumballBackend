@@ -20,11 +20,12 @@ import "./taskImages/deleteTaskImage";
 import "./taskImages/getTaskImage";
 import "./taskImages/getTaskImageAdmin";
 
-import "./taskStates/createTaskState";
-import "./taskStates/deleteTaskState";
-import "./taskStates/updateTaskState";
-import "./taskStates/getTaskState";
-import "./taskStates/getTaskStates";
+import "./taskSubmission/createTaskSubmission";
+import "./taskSubmission/deleteTaskSubmission";
+import "./taskSubmission/updateTaskSubmission";
+import "./taskSubmission/getTaskSubmission";
+import "./taskSubmission/getTaskSubmissions";
+import "./taskSubmission/getTaskSubmissionsAll";
 
 import "./auth/login";
 import "./auth/register";

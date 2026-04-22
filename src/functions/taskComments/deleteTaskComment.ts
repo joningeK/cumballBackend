@@ -1,5 +1,5 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
-import { taskStatesTable } from "../../lib/tableClient";
+import { commentsTable } from "../../lib/tableClient";
 import { requireAuth } from "../../lib/auth";
 
 app.http("deleteTaskComment", {
@@ -18,7 +18,7 @@ app.http("deleteTaskComment", {
         };
       }
 
-      await taskStatesTable.deleteEntity("TASKCOMMENT", id);
+      await commentsTable.deleteEntity("TASKCOMMENT", id);
 
       return {
         status: 204, // No Content

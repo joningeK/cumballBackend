@@ -1,17 +1,17 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
-import { taskStatesTable } from "../../lib/tableClient";
+import { taskSubmissionsTable } from "../../lib/tableClient";
 import { requireAuth } from "../../lib/auth";
 
-app.http("getTaskState", {
+app.http("getTaskSubmission", {
   methods: ["GET"],
   authLevel: "anonymous",
-  route: "taskState",
+  route: "taskSubmission",
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
       const user = requireAuth(req);
       const teamId = user.teamId;
 
-      const entities = taskStatesTable.listEntities({
+      const entities = taskSubmissionsTable.listEntities({
         queryOptions: {
           filter: `PartitionKey eq '${teamId}'`,
         },
@@ -28,12 +28,12 @@ app.http("getTaskState", {
         jsonBody: results,
       };
     } catch (error) {
-      console.error("🔥 getTaskStates error:", error);
+      console.error("🔥 getTaskSubmissions error:", error);
 
       return {
         status: 500,
         jsonBody: {
-          error: "Failed to get taskStates",
+          error: "Failed to get taskSubmissions",
         },
       };
     }

@@ -1,14 +1,14 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
-import { taskStatesTable } from "../../lib/tableClient";
+import { taskSubmissionsTable } from "../../lib/tableClient";
 import { v4 as uuidv4 } from "uuid";
 import { requireAuth } from "../../lib/auth";
 
 import { state } from "../../types/common";
 
-app.http("createTaskState", {
+app.http("createTaskSubmission", {
   methods: ["POST"],
   authLevel: "anonymous",
-  route: "taskState/{taskId}/{state}",
+  route: "taskSubmission/{taskId}/{state}",
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
       const taskId = req.params.taskId;
@@ -23,50 +23,53 @@ app.http("createTaskState", {
         };
       }
 
-      // Check if taskState already exists
-      let existingTaskState;
+      // Check if taskSubmission already exists
+      let existingTaskSubmission;
       try {
-        existingTaskState = await taskStatesTable.getEntity(teamId, taskId);
+        existingTaskSubmission = await taskSubmissionsTable.getEntity(
+          teamId,
+          taskId,
+        );
       } catch (error) {
-        // Entity doesn't exist, existingTaskState remains undefined
+        // Entity doesn't exist, existingTaskSubmission remains undefined
       }
 
-      if (existingTaskState) {
-        // Update existing taskState to "pending"
-        const updatedTaskState = {
+      if (existingTaskSubmission) {
+        // Update existing taskSubmission to "pending"
+        const updatedTaskSubmission = {
           partitionKey: teamId,
           rowKey: taskId,
           state: "pending",
           updatedAt: new Date().toISOString(),
         };
 
-        await taskStatesTable.updateEntity(updatedTaskState, "Merge");
+        await taskSubmissionsTable.updateEntity(updatedTaskSubmission, "Merge");
 
         return {
           status: 200,
-          jsonBody: updatedTaskState,
+          jsonBody: updatedTaskSubmission,
         };
       } else {
-        // Create new taskState
-        const taskState = {
+        // Create new taskSubmission
+        const taskSubmission = {
           partitionKey: teamId,
           rowKey: taskId,
           state: state,
           createdAt: new Date().toISOString(),
         };
 
-        await taskStatesTable.createEntity(taskState);
+        await taskSubmissionsTable.createEntity(taskSubmission);
 
         return {
           status: 201,
-          jsonBody: taskState,
+          jsonBody: taskSubmission,
         };
       }
     } catch (error) {
       return {
         status: 500,
         jsonBody: {
-          error: "Failed to create taskState",
+          error: "Failed to create taskSubmission",
         },
       };
     }

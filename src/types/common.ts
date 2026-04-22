@@ -32,7 +32,7 @@ export type teamRequest = {
   password: string;
 };
 
-export type taskState = {
+export type taskSubmission = {
   rowKey?: string;
   teamId: string;
   state: state;
