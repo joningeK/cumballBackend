@@ -10,7 +10,7 @@ app.http("updateTask", {
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
       const body = await req.json();
-      console.log("Received updateTask request with body:", body);
+
       const id = req.params.id;
 
       const user = requireAuth(req);
@@ -24,7 +24,7 @@ app.http("updateTask", {
       }
 
       const { title, description, points, isBonus } = body as task;
-      console.log("Updating task with title:", title);
+
       if (!title) {
         return {
           status: 400,

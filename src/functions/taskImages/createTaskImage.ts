@@ -1,4 +1,3 @@
-import { BlobServiceClient } from "@azure/storage-blob";
 import { app } from "@azure/functions";
 import { taskImagesTable, blobService } from "../../lib/tableClient";
 import { requireAuth } from "../../lib/auth";
@@ -8,42 +7,67 @@ app.http("createTaskImage", {
   authLevel: "anonymous",
   route: "taskImages",
   handler: async (req) => {
-    const formData = await req.formData();
-    const file = formData.get("file");
-    const taskId = formData.get("taskId");
+    try {
+      const formData = await req.formData();
+      const file = formData.get("file");
+      const taskId = formData.get("taskId");
 
-    const user = requireAuth(req);
-    const teamId = user.teamId;
-    if (!(file instanceof File)) {
-      throw new Error("Invalid file upload");
-    }
+      const user = requireAuth(req);
+      const teamId = user.teamId;
 
-    if (typeof taskId !== "string" || typeof teamId !== "string") {
-      throw new Error("Invalid taskId or teamId");
-    }
+      if (!(file instanceof File)) {
+        return {
+          status: 400,
+          jsonBody: { error: "Invalid file upload" },
+        };
+      }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const container = blobService.getContainerClient("task-images");
-    const blobName = `${taskId}/${crypto.randomUUID()}.jpg`;
-    const blockBlob = container.getBlockBlobClient(blobName);
+      if (typeof taskId !== "string") {
+        return {
+          status: 400,
+          jsonBody: { error: "Invalid taskId" },
+        };
+      }
 
-    await blockBlob.uploadData(buffer);
+      const buffer = Buffer.from(await file.arrayBuffer());
 
-    const imageUrl = blockBlob.url;
+      const container = blobService.getContainerClient("task-images");
 
-    // lagre metadata i Table Storage
-    await taskImagesTable.createEntity({
-      partitionKey: teamId,
-      rowKey: taskId,
-      imageUrl,
-      createdAt: new Date().toISOString(),
-    });
+      const blobName = `${teamId}/${taskId}.jpg`;
+      const blockBlob = container.getBlockBlobClient(blobName);
 
-    return {
-      status: 200,
-      jsonBody: {
+      // 🔥 Slett hvis finnes
+      await blockBlob.deleteIfExists();
+
+      // 🔥 Last opp på nytt
+      await blockBlob.uploadData(buffer, {
+        blobHTTPHeaders: { blobContentType: file.type },
+      });
+      const imageUrl = blockBlob.url;
+
+      // 🔥 UPSERT i stedet for create
+      await taskImagesTable.upsertEntity({
+        partitionKey: teamId,
+        rowKey: taskId,
         imageUrl,
-      },
-    };
+        updatedAt: new Date().toISOString(),
+      });
+
+      return {
+        status: 200,
+        jsonBody: {
+          imageUrl,
+        },
+      };
+    } catch (error) {
+      console.error("🔥 createTaskImage error:", error);
+
+      return {
+        status: 500,
+        jsonBody: {
+          error: "Failed to upload image",
+        },
+      };
+    }
   },
 });

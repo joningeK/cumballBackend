@@ -18,9 +18,9 @@ export const teamsTable = TableClient.fromConnectionString(
   "Teams",
 );
 
-export const taskStatesTable = TableClient.fromConnectionString(
+export const taskSubmissionsTable = TableClient.fromConnectionString(
   connectionString,
-  "TaskStates",
+  "TaskSubmissions",
 );
 
 export const commentsTable = TableClient.fromConnectionString(
