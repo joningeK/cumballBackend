@@ -26,6 +26,7 @@ import "./taskSubmission/updateTaskSubmission";
 import "./taskSubmission/getTaskSubmission";
 import "./taskSubmission/getTaskSubmissions";
 import "./taskSubmission/getTaskSubmissionsAll";
+import "./taskSubmission/getTaskSubmissionLeaderBoard";
 
 import "./auth/login";
 import "./auth/register";

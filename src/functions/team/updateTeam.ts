@@ -21,7 +21,7 @@ app.http("updateTeam", {
       }
 
       const body = await req.json();
-      const { name } = body as team;
+      const { name, username } = body as team;
 
       if (!name) {
         return {
@@ -29,11 +29,18 @@ app.http("updateTeam", {
           jsonBody: { error: "name is required" },
         };
       }
+      if (!username) {
+        return {
+          status: 400,
+          jsonBody: { error: "username is required" },
+        };
+      }
 
       const updatedTeam = {
         partitionKey: "TEAM",
         rowKey: id,
         name,
+        username,
         updatedAt: new Date().toISOString(),
       };
 

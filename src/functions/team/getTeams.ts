@@ -17,6 +17,7 @@ app.http("getTeams", {
       const team: team = {
         rowKey: entity.rowKey as string | undefined,
         name: entity.name as string,
+        username: entity.username as string,
       };
       teams.push(team);
     }

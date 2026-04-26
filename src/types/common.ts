@@ -24,11 +24,12 @@ export type player = {
 export type team = {
   rowKey?: string;
   name: string;
+  username: string;
   // passwordHash: string;
 };
 
 export type teamRequest = {
-  name: string;
+  username: string;
   password: string;
 };
 

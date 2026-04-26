@@ -12,7 +12,7 @@ app.http("createTeam", {
     try {
       const body = await req.json();
 
-      const { name } = body as team;
+      const { name, username } = body as team;
       const user = requireAdmin(req);
       const teamId = user.teamId;
 
@@ -23,10 +23,18 @@ app.http("createTeam", {
         };
       }
 
+      if (!username) {
+        return {
+          status: 400,
+          jsonBody: { error: "username is required" },
+        };
+      }
+
       const team = {
         partitionKey: "TEAM",
         rowKey: uuidv4(),
         name,
+        username,
         createdAt: new Date().toISOString(),
       };
 

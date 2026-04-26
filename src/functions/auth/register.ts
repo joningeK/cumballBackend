@@ -8,28 +8,29 @@ app.http("registerTeam", {
   route: "auth/register",
   handler: async (req: HttpRequest): Promise<HttpResponseInit> => {
     try {
-      const { name, password } = (await req.json()) as {
+      const { name, username, password } = (await req.json()) as {
         name: string;
+        username: string;
         password: string;
       };
 
-      if (!name || !password) {
+      if (!name || !username || !password) {
         return {
           status: 400,
-          jsonBody: { error: "name and password required" },
+          jsonBody: { error: "name, username and password required" },
         };
       }
 
       const existing = teamsTable.listEntities({
         queryOptions: {
-          filter: `PartitionKey eq 'TEAM' and name eq '${name}'`,
+          filter: `PartitionKey eq 'TEAM' and username eq '${username}'`,
         },
       });
 
       for await (const e of existing) {
         return {
           status: 400,
-          jsonBody: { error: "Team already exists" },
+          jsonBody: { error: "Username already exists" },
         };
       }
 
@@ -39,6 +40,7 @@ app.http("registerTeam", {
         partitionKey: "TEAM",
         rowKey: crypto.randomUUID(),
         name,
+        username,
         passwordHash,
         isAdmin: false,
         createdAt: new Date().toISOString(),
@@ -51,6 +53,7 @@ app.http("registerTeam", {
         jsonBody: {
           teamId: entity.rowKey,
           name: entity.name,
+          username: entity.username,
         },
       };
     } catch (error) {
