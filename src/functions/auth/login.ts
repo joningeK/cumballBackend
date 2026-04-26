@@ -12,9 +12,9 @@ app.http("login", {
     try {
       const body = await req.json();
 
-      const { name, password } = body as teamRequest;
+      const { username, password } = body as teamRequest;
 
-      if (!name || !password) {
+      if (!username || !password) {
         return {
           status: 400,
           jsonBody: { error: "Missing credentials" },
@@ -23,7 +23,7 @@ app.http("login", {
 
       const entities = teamsTable.listEntities({
         queryOptions: {
-          filter: `PartitionKey eq 'TEAM' and name eq '${name}'`,
+          filter: `PartitionKey eq 'TEAM' and username eq '${username}'`,
         },
       });
 
@@ -63,6 +63,7 @@ app.http("login", {
         status: 200,
         jsonBody: {
           teamId: team.rowKey,
+          username: team.username,
           name: team.name,
           isAdmin: team.isAdmin,
           token,
