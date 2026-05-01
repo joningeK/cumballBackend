@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
 import { teamsTable } from "../../lib/tableClient";
 import { team } from "../../types/common";
@@ -21,7 +22,9 @@ app.http("updateTeam", {
       }
 
       const body = await req.json();
-      const { name, username } = body as team;
+      const { name, username, password } = body as team & {
+        password?: string;
+      };
 
       if (!name) {
         return {
@@ -36,13 +39,17 @@ app.http("updateTeam", {
         };
       }
 
-      const updatedTeam = {
+      const updatedTeam: any = {
         partitionKey: "TEAM",
         rowKey: id,
         name,
         username,
         updatedAt: new Date().toISOString(),
       };
+
+      if (password && password.trim() !== "") {
+        updatedTeam.passwordHash = await bcrypt.hash(password, 10);
+      }
 
       await teamsTable.updateEntity(updatedTeam, "Merge");
 

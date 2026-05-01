@@ -1,7 +1,7 @@
 import { app, HttpRequest, HttpResponseInit } from "@azure/functions";
 import { tasksTable } from "../../lib/tableClient";
 import { task } from "../../types/common";
-import { requireAdmin, requireAuth } from "../../lib/auth";
+import { requireAuth } from "../../lib/auth";
 
 app.http("updateTask", {
   methods: ["PUT"],
@@ -23,7 +23,8 @@ app.http("updateTask", {
         };
       }
 
-      const { title, description, points, isBonus } = body as task;
+      const { title, description, points, isBonus, isReoccuring } =
+        body as task;
 
       if (!title) {
         return {
@@ -53,6 +54,7 @@ app.http("updateTask", {
         description,
         points,
         isBonus: isBonus ?? false,
+        isReoccuring: isReoccuring ?? false,
         updatedAt: new Date().toISOString(),
       };
 
