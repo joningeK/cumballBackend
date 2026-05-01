@@ -12,7 +12,8 @@ app.http("createTask", {
     try {
       const body = await req.json();
 
-      const { title, description, points, isBonus } = body as task;
+      const { title, description, points, isBonus, isReoccuring } =
+        body as task;
 
       const user = requireAdmin(req);
       const teamId = user.teamId;
@@ -44,6 +45,7 @@ app.http("createTask", {
         description: description ?? "",
         points: points ?? 0,
         isBonus: isBonus ?? false,
+        isReoccuring: isReoccuring ?? false,
         createdAt: new Date().toISOString(),
       };
 

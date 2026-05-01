@@ -4,6 +4,7 @@ export type task = {
   description: string;
   points: number;
   isBonus: boolean;
+  isReoccuring: boolean;
 };
 
 export type taskImage = {
