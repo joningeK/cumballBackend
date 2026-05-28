@@ -47,6 +47,7 @@ app.http("createTask", {
         isBonus: isBonus ?? false,
         isReoccuring: isReoccuring ?? false,
         createdAt: new Date().toISOString(),
+        sortOrder: Date.now() * -1,
       };
 
       await tasksTable.createEntity(task);

@@ -19,6 +19,7 @@ app.http("getTasks", {
         points: entity.points as number,
         isBonus: entity.isBonus as boolean,
         isReoccuring: entity.isReoccuring as boolean,
+        sortOrder: entity.sortOrder as number,
       };
       tasks.push(task);
     }
@@ -27,7 +28,7 @@ app.http("getTasks", {
     tasks.sort((a, b) => {
       if (a.isBonus && !b.isBonus) return -1;
       if (!a.isBonus && b.isBonus) return 1;
-      return 0;
+      return a.sortOrder - b.sortOrder;
     });
 
     return {
