@@ -4,6 +4,7 @@ export type task = {
   description: string;
   points: number;
   isBonus: boolean;
+  sortOrder: number;
   isReoccuring: boolean;
 };
 
