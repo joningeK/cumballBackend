@@ -23,6 +23,27 @@ app.http("createTaskImage", {
         };
       }
 
+      // Validate file type - only allow images and videos
+      const allowedMimeTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+        "video/mp4",
+        "video/webm",
+        "video/quicktime",
+        "video/x-msvideo",
+      ];
+
+      if (!allowedMimeTypes.includes(file.type)) {
+        return {
+          status: 400,
+          jsonBody: {
+            error: "Invalid file type. Only images and videos are allowed.",
+          },
+        };
+      }
+
       if (typeof taskId !== "string") {
         return {
           status: 400,
@@ -54,6 +75,10 @@ app.http("createTaskImage", {
       const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
 
       const blobName = `${teamId}/${taskId}.${extension}`;
+      const extension = file.name.split(".").pop();
+
+      const blobName = `${teamId}/${taskId}.${extension}`;
+
       const blockBlob = container.getBlockBlobClient(blobName);
 
       // Slett eksisterende fil
@@ -79,6 +104,8 @@ app.http("createTaskImage", {
         capturedAt,
 
         updatedAt: uploadedAt,
+        mediaType: file.type,
+        updatedAt: new Date().toISOString(),
       });
 
       return {
