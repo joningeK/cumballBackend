@@ -1,6 +1,7 @@
 import { app } from "@azure/functions";
 import { taskImagesTable, blobService } from "../../lib/tableClient";
 import { requireAuth } from "../../lib/auth";
+import exifr from "exifr";
 
 app.http("createTaskImage", {
   methods: ["POST"],
@@ -52,28 +53,57 @@ app.http("createTaskImage", {
 
       const buffer = Buffer.from(await file.arrayBuffer());
 
+      // 📷 Les EXIF-data
+      let capturedAt: string | null = null;
+      let cameraModel: string | null = null;
+      let phoneMake: string | null = null;
+      let latitude: number | null = null;
+      let longitude: number | null = null;
+
+      try {
+        const exif = await exifr.parse(buffer);
+
+        if (exif?.DateTimeOriginal instanceof Date) {
+          capturedAt = exif.DateTimeOriginal.toISOString();
+        }
+      } catch (err) {
+        console.warn("Could not read EXIF metadata:", err);
+      }
+
       const container = blobService.getContainerClient("task-images");
 
+      const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
+
+      const blobName = `${teamId}/${taskId}.${extension}`;
       const extension = file.name.split(".").pop();
 
       const blobName = `${teamId}/${taskId}.${extension}`;
 
       const blockBlob = container.getBlockBlobClient(blobName);
 
-      // 🔥 Slett hvis finnes
+      // Slett eksisterende fil
       await blockBlob.deleteIfExists();
 
-      // 🔥 Last opp på nytt
+      // Last opp ny fil
       await blockBlob.uploadData(buffer, {
-        blobHTTPHeaders: { blobContentType: file.type },
+        blobHTTPHeaders: {
+          blobContentType: file.type,
+        },
       });
+
       const imageUrl = blockBlob.url;
 
-      // 🔥 UPSERT i stedet for create
+      const uploadedAt = new Date().toISOString();
+
+      // Lagre metadata
       await taskImagesTable.upsertEntity({
         partitionKey: teamId,
         rowKey: taskId,
+
         imageUrl,
+        capturedAt,
+
+        updatedAt: uploadedAt,
         mediaType: file.type,
         updatedAt: new Date().toISOString(),
       });
@@ -82,6 +112,8 @@ app.http("createTaskImage", {
         status: 200,
         jsonBody: {
           imageUrl,
+          capturedAt,
+          uploadedAt,
         },
       };
     } catch (error) {
